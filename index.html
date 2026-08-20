@@ -3047,7 +3047,8 @@ async function saveQuickPrice(){
     if(error){showToast('저장 실패: '+error.message,'error');return}
     await handleSauceLink(rec);
     if(costFieldVisible){
-      await sb.from('items').update({cost_price:costRaw!==''?parseFloat(costRaw):null}).eq('id',itemId);
+      const{error:costError}=await sb.from('items').update({cost_price:costRaw!==''?parseFloat(costRaw):null}).eq('id',itemId);
+      if(costError){showToast('원가 저장 실패: '+costError.message,'error');return}
     }
     await loadAllData();
   }
@@ -3156,7 +3157,8 @@ async function saveEditPrice(){
     const {error}=await sb.from('price_history').update(rec).eq('id',editId);
     if(error){showToast('저장 실패: '+error.message,'error');return}
     if(costFieldVisible){
-      await sb.from('items').update({cost_price:costRaw!==''?parseFloat(costRaw):null}).eq('id',itemId);
+      const{error:costError}=await sb.from('items').update({cost_price:costRaw!==''?parseFloat(costRaw):null}).eq('id',itemId);
+      if(costError){showToast('원가 저장 실패: '+costError.message,'error');return}
     }
     await loadAllData();
   }
