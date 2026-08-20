@@ -3047,8 +3047,9 @@ async function saveQuickPrice(){
     if(error){showToast('저장 실패: '+error.message,'error');return}
     await handleSauceLink(rec);
     if(costFieldVisible){
-      const{error:costError}=await sb.from('items').update({cost_price:costRaw!==''?parseFloat(costRaw):null}).eq('id',itemId);
+      const{data:costData,error:costError}=await sb.from('items').update({cost_price:costRaw!==''?parseFloat(costRaw):null}).eq('id',itemId).select();
       if(costError){showToast('원가 저장 실패: '+costError.message,'error');return}
+      if(!costData||costData.length===0){showToast('원가 저장 실패: 권한(RLS) 문제로 반영되지 않았습니다. Supabase items 테이블 UPDATE 정책을 확인하세요.','error');return}
     }
     await loadAllData();
   }
@@ -3157,8 +3158,9 @@ async function saveEditPrice(){
     const {error}=await sb.from('price_history').update(rec).eq('id',editId);
     if(error){showToast('저장 실패: '+error.message,'error');return}
     if(costFieldVisible){
-      const{error:costError}=await sb.from('items').update({cost_price:costRaw!==''?parseFloat(costRaw):null}).eq('id',itemId);
+      const{data:costData,error:costError}=await sb.from('items').update({cost_price:costRaw!==''?parseFloat(costRaw):null}).eq('id',itemId).select();
       if(costError){showToast('원가 저장 실패: '+costError.message,'error');return}
+      if(!costData||costData.length===0){showToast('원가 저장 실패: 권한(RLS) 문제로 반영되지 않았습니다. Supabase items 테이블 UPDATE 정책을 확인하세요.','error');return}
     }
     await loadAllData();
   }
@@ -3286,7 +3288,11 @@ async function saveItem(){
     if(editId){const idx=db.items.findIndex(i=>i.id===editId);if(idx>=0)db.items[idx]={...db.items[idx],...rec}}
     else db.items.push({id:'i'+Date.now(),...rec,created_at:new Date().toISOString()});
   }else{
-    if(editId){const{error}=await sb.from('items').update(rec).eq('id',editId);if(error){showToast('저장 실패','error');return}}
+    if(editId){
+      const{data,error}=await sb.from('items').update(rec).eq('id',editId).select();
+      if(error){showToast('저장 실패: '+error.message,'error');return}
+      if(!data||data.length===0){showToast('저장 실패: 권한(RLS) 문제로 반영되지 않았습니다. Supabase items 테이블 UPDATE 정책을 확인하세요.','error');return}
+    }
     else{const{error}=await sb.from('items').insert(rec);if(error){showToast('저장 실패','error');return}}
     await loadAllData();
   }
