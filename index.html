@@ -1019,7 +1019,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           </div>
           <table>
             <thead><tr>
-              <th>품목명</th><th>카테고리</th><th>법인</th><th>공급처</th>
+              <th>품목명</th><th>카테고리</th><th>법인</th><th>공급처</th><th>원가</th>
               <th>매입가</th><th>판매가</th><th>마진</th><th>적용일</th><th>작업</th>
             </tr></thead>
             <tbody id="margin-tbody"></tbody>
@@ -2299,7 +2299,7 @@ function renderMarginTable(all){
   document.getElementById('m-count').textContent=` ${rows.length}개`;
   const tbody=document.getElementById('margin-tbody');
   if(!rows.length){
-    tbody.innerHTML='<tr class="no-data-row"><td colspan="9"><div class="nd-icon">📭</div>조건에 맞는 데이터가 없습니다</td></tr>';return;
+    tbody.innerHTML='<tr class="no-data-row"><td colspan="10"><div class="nd-icon">📭</div>조건에 맞는 데이터가 없습니다</td></tr>';return;
   }
   tbody.innerHTML=rows.map(({item,entity,price,rm})=>{
     const catBadge=item.category==='소스류'?'badge-amber':'badge-blue';
@@ -2317,6 +2317,7 @@ function renderMarginTable(all){
       <td><span class="badge ${catBadge}">${item.category}</span></td>
       <td>${entity?`<span class="badge ${entBadge}">${entity.name}</span>`:'<span class="badge badge-gray">-</span>'}</td>
       <td style="font-size:12px;color:var(--c-text3)">${sName(item.supplier_id)}</td>
+      <td>${isInternalCostSupplier(itemSupplier)?fmtPrice(item.cost_price):'<span style="color:var(--c-text3)">X</span>'}</td>
       <td>${fmtPrice(price?.purchase_price)}</td>
       <td>${fmtPrice(price?.sale_price)}</td>
       <td>${fmtMargin(rm)}${rateNote}${costMarginNote}</td>
