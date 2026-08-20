@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>물류관리 ERP — Logistics Management System</title>
+  <title>레버패밀리 ERP — Logistics Management System</title>
   <meta name="description" content="법인 간 매입-판매 물류관리 ERP 시스템 — 마진 현황, 가격 변동 이력, 스펙 관리" />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -129,10 +130,12 @@ body {
 }
 .setup-card-icon {
   width: 48px; height: 48px; border-radius: 14px;
-  background: var(--grad-primary);
+  background: #fff; border: 1px solid var(--c-border);
   display: flex; align-items: center; justify-content: center;
   font-size: 22px; box-shadow: 0 4px 12px var(--c-primary-glow);
+  padding: 6px; box-sizing: border-box;
 }
+.setup-card-icon img, .brand-icon img { width: 100%; height: 100%; object-fit: contain; }
 .setup-card-title { font-size: 18px; font-weight: 700; }
 .setup-card-sub { font-size: 12px; color: var(--c-text3); margin-top: 2px; }
 
@@ -214,10 +217,11 @@ body {
 .brand-inner { display: flex; align-items: center; gap: 10px; }
 .brand-icon {
   width: 38px; height: 38px; border-radius: 12px;
-  background: var(--grad-primary);
+  background: #fff; border: 1px solid var(--c-border);
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; flex-shrink: 0;
   box-shadow: 0 4px 10px var(--c-primary-glow);
+  padding: 5px; box-sizing: border-box;
 }
 .brand-text { font-size: 13px; font-weight: 700; color: var(--c-text); }
 .brand-sub { font-size: 10px; color: var(--c-text3); font-weight: 400; margin-top: 1px; }
@@ -685,7 +689,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
   <div class="setup-wrap">
     <div class="setup-hero">
       <div class="setup-hero-badge">
-        <span>🚚</span> 물류관리 ERP v2.0
+        <span>🚚</span> 레버패밀리 ERP v2.0
       </div>
       <h1>스마트 물류<br/>관리 시스템</h1>
       <p>법인 간 매입·판매 가격을 실시간으로 관리하고,<br/>마진 현황과 스펙 변경 이력을 한눈에 확인하세요.</p>
@@ -711,7 +715,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
 
     <div class="setup-card">
       <div class="setup-card-logo">
-        <div class="setup-card-icon">📦</div>
+        <div class="setup-card-icon"><img src="assets/logo.png" alt="LEVERFRAN" /></div>
         <div>
           <div class="setup-card-title">시작하기</div>
           <div class="setup-card-sub">Supabase 연결 또는 데모 모드</div>
@@ -755,9 +759,9 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
   <aside class="sidebar">
     <div class="sidebar-brand">
       <div class="brand-inner">
-        <div class="brand-icon">📦</div>
+        <div class="brand-icon"><img src="assets/logo.png" alt="LEVERFRAN" /></div>
         <div>
-          <div class="brand-text">물류관리 ERP</div>
+          <div class="brand-text">레버패밀리 ERP</div>
           <div class="brand-sub">Logistics System</div>
         </div>
       </div>
