@@ -79,8 +79,14 @@ create table if not exists partner_payments (
   status text not null default 'pending', -- pending | completed
   paid_date date,
   note text,
+  tax_invoice_status text not null default 'pending', -- pending | completed
+  tax_invoice_date date,
   created_at timestamptz not null default now()
 );
+
+-- 기존에 세금계산서 컬럼이 없던 버전에 추가 (데이터 유지)
+alter table partner_payments add column if not exists tax_invoice_status text not null default 'pending';
+alter table partner_payments add column if not exists tax_invoice_date date;
 
 -- ========== 법인 계정 (사이트 로그인 정보) ==========
 create table if not exists entity_accounts (

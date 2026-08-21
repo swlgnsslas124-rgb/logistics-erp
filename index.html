@@ -180,6 +180,9 @@ body {
 }
 .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px var(--c-primary-glow); }
 .btn-primary:active { transform: translateY(0); }
+.btn-violet { background: var(--c-violet); color: #fff; box-shadow: 0 2px 8px rgba(124,92,252,0.35); }
+.btn-violet:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,92,252,0.45); }
+.btn-violet:active { transform: translateY(0); }
 
 .btn-secondary {
   background: var(--c-surface); color: var(--c-text2);
@@ -421,6 +424,10 @@ td {
 }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: #fafbff; }
+.sortable-th { cursor: pointer; user-select: none; }
+.sortable-th:hover { color: var(--c-primary); }
+.sort-icon { display: inline-block; font-size: 9px; margin-left: 3px; color: var(--c-border2); }
+.sort-icon.active { color: var(--c-primary); }
 .td-name { font-weight: 600; color: var(--c-text); }
 .td-sub { font-size: 11px; color: var(--c-text3); margin-top: 1px; }
 
@@ -448,7 +455,7 @@ tr:hover td { background: #fafbff; }
 .ftab {
   padding: 5px 13px; border-radius: 99px; border: 1px solid var(--c-border);
   background: var(--c-surface); color: var(--c-text2); font-size: 12px; font-family: inherit;
-  cursor: pointer; transition: all 0.15s; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; font-weight: 500; flex-shrink: 0;
 }
 .ftab:hover { border-color: var(--c-primary); color: var(--c-primary); }
 .ftab.active { background: var(--c-primary); border-color: var(--c-primary); color: #fff; }
@@ -1059,8 +1066,15 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           </div>
           <table>
             <thead><tr>
-              <th>품목명</th><th>카테고리</th><th>법인</th><th>공급처</th><th>원가</th>
-              <th>매입가</th><th>판매가</th><th>마진</th><th>적용일</th><th>작업</th>
+              <th class="sortable-th" onclick="toggleMarginSort('name')">품목명 <span class="sort-icon" id="ms-icon-name">⇅</span></th>
+              <th class="sortable-th" onclick="toggleMarginSort('category')">카테고리 <span class="sort-icon" id="ms-icon-category">⇅</span></th>
+              <th>법인</th><th>공급처</th>
+              <th class="sortable-th" onclick="toggleMarginSort('cost')">원가 <span class="sort-icon" id="ms-icon-cost">⇅</span></th>
+              <th class="sortable-th" onclick="toggleMarginSort('purchase')">매입가 <span class="sort-icon" id="ms-icon-purchase">⇅</span></th>
+              <th class="sortable-th" onclick="toggleMarginSort('sale')">판매가 <span class="sort-icon" id="ms-icon-sale">⇅</span></th>
+              <th class="sortable-th" onclick="toggleMarginSort('margin')">마진 <span class="sort-icon" id="ms-icon-margin">⇅</span></th>
+              <th class="sortable-th" onclick="toggleMarginSort('date')">적용일 <span class="sort-icon" id="ms-icon-date">⇅</span></th>
+              <th>작업</th>
             </tr></thead>
             <tbody id="margin-tbody"></tbody>
           </table>
@@ -1282,7 +1296,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
             <button class="ftab" onclick="filterPartner('completed',this)">완료</button>
           </div>
         </div>
-        <div class="filter-tabs" id="partner-month-tabs" style="margin-bottom:14px;flex-wrap:wrap;"></div>
+        <div class="filter-tabs" id="partner-month-tabs" style="margin-bottom:14px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;"></div>
 
         <div class="table-card">
           <div class="tc-header">
@@ -1290,7 +1304,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           </div>
           <table>
             <thead><tr>
-              <th>청구월</th><th>브랜드명</th><th>청구금액</th><th>상태</th><th>입금일</th><th>비고</th><th>작업</th>
+              <th>청구월</th><th>브랜드명</th><th>청구금액</th><th>상태</th><th>입금일</th><th>세금계산서</th><th>비고</th><th>작업</th>
             </tr></thead>
             <tbody id="partner-tbody"></tbody>
           </table>
@@ -2114,6 +2128,7 @@ let sb = null, isDemoMode = false;
 let isAdmin = false, adminEmail = null;
 let db = { entities:[], suppliers:[], items:[], price_history:[], spec_history:[], partner_brands:[], partner_payments:[], entity_accounts:[], employees:[], leave_logs:[], corporate_cards:[], logistics_providers:[], bank_accounts:[], group_buys:[], fixed_expenses:[] };
 let mf = { entity:null, cat:null, search:'' };
+let marginSort = { field:null, dir:'asc' };
 let itemFilter = { cat:'all', search:'' };
 let priceChart = null;
 let partnerFilter = 'all';
@@ -2170,10 +2185,10 @@ function getDemoData(){
       {id:'pb2', name:'로지스틱스 파트너B', monthly_fee: 300000, is_active: true, created_at: '2024-03-01'}
     ],
     partner_payments:[
-      {id:'pp1', brand_id:'pb1', billing_month:'2024-07', amount: 500000, status:'completed', paid_date:'2024-07-25', note:''},
-      {id:'pp2', brand_id:'pb2', billing_month:'2024-07', amount: 300000, status:'completed', paid_date:'2024-07-26', note:''},
-      {id:'pp3', brand_id:'pb1', billing_month:'2024-08', amount: 500000, status:'pending', paid_date:null, note:''},
-      {id:'pp4', brand_id:'pb2', billing_month:'2024-08', amount: 300000, status:'pending', paid_date:null, note:''}
+      {id:'pp1', brand_id:'pb1', billing_month:'2024-07', amount: 500000, status:'completed', paid_date:'2024-07-25', note:'', tax_invoice_status:'completed', tax_invoice_date:'2024-07-26'},
+      {id:'pp2', brand_id:'pb2', billing_month:'2024-07', amount: 300000, status:'completed', paid_date:'2024-07-26', note:'', tax_invoice_status:'pending', tax_invoice_date:null},
+      {id:'pp3', brand_id:'pb1', billing_month:'2024-08', amount: 500000, status:'pending', paid_date:null, note:'', tax_invoice_status:'pending', tax_invoice_date:null},
+      {id:'pp4', brand_id:'pb2', billing_month:'2024-08', amount: 300000, status:'pending', paid_date:null, note:'', tax_invoice_status:'pending', tax_invoice_date:null}
     ],
     entity_accounts:[
       {id:'ea1', entity_id:'e1', site_name:'홈택스 (국세청)', login_id:'abiz123', login_pw:'pass!@#', memo:'공동인증서 USB 보관중', created_at:'2024-01-01'},
@@ -2396,6 +2411,7 @@ function fmtMargin(v){
   return `<span class="${cls}">${n>0?'+':''}₩${n.toLocaleString()}</span>`;
 }
 function fmtDate(d){if(!d)return'-';return new Date(d).toLocaleDateString('ko-KR')}
+function badgeHtml(cls,label){return `<span class="badge ${cls}">${label}</span>`}
 
 // 실질 마진 = 판매가 - 매입가 - (판매가 × 법인별 판매 수수료율)
 // 예: 동원홈푸드向 판매 건은 해당 법인 카드에 수수료율(예: 8%)을 등록해두면 자동 반영됩니다.
@@ -2607,11 +2623,65 @@ function renderMarginView(){
   window._allRows=all;
 }
 
+// 숫자/콤마 포함 문자열을 안전하게 숫자로 변환 (파싱 불가하면 NaN)
+function toNum(v){
+  if(v===null||v===undefined||v==='')return NaN;
+  if(typeof v==='number')return v;
+  const n=parseFloat(String(v).replace(/,/g,'').replace(/[^0-9.\-]/g,''));
+  return n;
+}
+
+const MARGIN_SORT_NUMERIC_FIELDS=['cost','purchase','sale','margin','date'];
+function getMarginSortValue(row,field){
+  switch(field){
+    case 'name': return row.item.name||'';
+    case 'category': return row.item.category||'';
+    case 'cost': return toNum(row.item.cost_price);
+    case 'purchase': return toNum(row.price?.purchase_price);
+    case 'sale': return toNum(row.price?.sale_price);
+    case 'margin': return toNum(row.rm);
+    case 'date': return row.price?.effective_date?new Date(row.price.effective_date).getTime():NaN;
+    default: return null;
+  }
+}
+// rows를 직접 변경하지 않고 정렬된 새 배열을 반환 (재사용 가능한 공통 정렬 함수)
+function sortRowsBy(rows,field,dir){
+  if(!field)return rows;
+  const mul=dir==='asc'?1:-1;
+  const numeric=MARGIN_SORT_NUMERIC_FIELDS.includes(field);
+  return [...rows].sort((a,b)=>{
+    const va=getMarginSortValue(a,field),vb=getMarginSortValue(b,field);
+    if(numeric){
+      const na=typeof va==='number'&&!isNaN(va),nb=typeof vb==='number'&&!isNaN(vb);
+      if(!na&&!nb)return 0;
+      if(!na)return 1;
+      if(!nb)return -1;
+      return (va-vb)*mul;
+    }
+    return String(va).localeCompare(String(vb),'ko')*mul;
+  });
+}
+function toggleMarginSort(field){
+  if(marginSort.field===field){marginSort.dir=marginSort.dir==='asc'?'desc':'asc'}
+  else{marginSort={field,dir:'asc'}}
+  renderMarginTable(window._allRows||[]);
+}
+function updateMarginSortIcons(){
+  ['name','category','cost','purchase','sale','margin','date'].forEach(f=>{
+    const el=document.getElementById('ms-icon-'+f);
+    if(!el)return;
+    if(marginSort.field===f){el.textContent=marginSort.dir==='asc'?'▲':'▼';el.classList.add('active')}
+    else{el.textContent='⇅';el.classList.remove('active')}
+  });
+}
+
 function renderMarginTable(all){
   let rows=[...all];
   if(mf.entity)rows=rows.filter(r=>r.entity?.id===mf.entity);
   if(mf.cat)rows=rows.filter(r=>r.item.category===mf.cat);
   if(mf.search)rows=rows.filter(r=>r.item.name.includes(mf.search));
+  rows=sortRowsBy(rows,marginSort.field,marginSort.dir);
+  updateMarginSortIcons();
   document.getElementById('m-count').textContent=` ${rows.length}개`;
   const tbody=document.getElementById('margin-tbody');
   if(!rows.length){
@@ -3883,9 +3953,12 @@ function renderPartnerView(){
   document.getElementById('pt-pending').textContent = `₩${pending.toLocaleString()}`;
   document.getElementById('pt-overdue').textContent = `₩${overdue.toLocaleString()}`;
 
-  const months = [...new Set(db.partner_payments.map(p=>p.billing_month).filter(Boolean))].sort();
-  if(partnerMonth===null){partnerMonth=months.length?months[months.length-1]:'all'}
-  if(partnerMonth!=='all'&&!months.includes(partnerMonth)){partnerMonth=months.length?months[months.length-1]:'all'}
+  // 청구월 데이터 + "이번 달"은 데이터가 없어도 항상 포함, 최신월이 앞에 오도록 정렬
+  const nowForTabs=new Date();
+  const currentMonthStr=`${nowForTabs.getFullYear()}-${String(nowForTabs.getMonth()+1).padStart(2,'0')}`;
+  const months=[...new Set([...db.partner_payments.map(p=>p.billing_month).filter(Boolean),currentMonthStr])].sort().reverse();
+  if(partnerMonth===null){partnerMonth=months[0]}
+  if(partnerMonth!=='all'&&!months.includes(partnerMonth)){partnerMonth=months[0]}
   const monthTabsEl=document.getElementById('partner-month-tabs');
   monthTabsEl.innerHTML=`<button class="ftab${partnerMonth==='all'?' active':''}" onclick="filterPartnerMonth('all')">전체</button>`+
     months.map(m=>{
@@ -4004,7 +4077,7 @@ function renderPartnerTable(){
   const tbody = document.getElementById('partner-tbody');
   
   if(!rows.length) {
-    tbody.innerHTML = '<tr class="no-data-row"><td colspan="7"><div class="nd-icon">📭</div>수금 내역이 없습니다</td></tr>';
+    tbody.innerHTML = '<tr class="no-data-row"><td colspan="8"><div class="nd-icon">📭</div>수금 내역이 없습니다</td></tr>';
     return;
   }
   
@@ -4012,16 +4085,20 @@ function renderPartnerTable(){
   tbody.innerHTML = rows.map(p => {
     const brand = db.partner_brands.find(b => b.id === p.brand_id);
     let statusHtml = '';
-    
+
     if(p.status === 'completed') {
-      statusHtml = '<span class="badge badge-green">입금 완료</span>';
+      statusHtml = badgeHtml('badge-green','입금 완료');
     } else {
       const parts = p.billing_month.split('-');
       const dueDate = new Date(parts[0], parts[1]-1, 25);
       const isOverdue = now > dueDate;
-      if(isOverdue) statusHtml = '<span class="badge badge-red">연체</span>';
-      else statusHtml = '<span class="badge badge-amber">대기</span>';
+      statusHtml = isOverdue ? badgeHtml('badge-red','연체') : badgeHtml('badge-amber','대기');
     }
+
+    const taxCompleted = p.tax_invoice_status === 'completed';
+    const taxHtml = taxCompleted
+      ? badgeHtml('badge-green','세금계산 완료') + (p.tax_invoice_date?`<div style="font-size:11px;color:var(--c-text3);margin-top:2px;">${fmtDate(p.tax_invoice_date)}</div>`:'')
+      : badgeHtml('badge-amber','세금계산 대기');
 
     return `<tr>
       <td style="font-weight:600;color:var(--c-text)">${p.billing_month}</td>
@@ -4029,10 +4106,12 @@ function renderPartnerTable(){
       <td class="price-val">₩${Number(p.amount).toLocaleString()}</td>
       <td>${statusHtml}</td>
       <td style="font-size:12px;color:var(--c-text3)">${p.paid_date?fmtDate(p.paid_date):'-'}</td>
+      <td>${taxHtml}</td>
       <td style="font-size:12px;color:var(--c-text3)">${p.note||'-'}</td>
       <td>
         <div class="act-btns" style="display:inline-flex;">
           ${p.status === 'pending' ? `<button class="btn btn-sm btn-primary" onclick="confirmPayment('${p.id}')">입금 확인</button>` : ''}
+          ${!taxCompleted ? `<button class="btn btn-sm btn-violet" onclick="confirmTaxInvoice('${p.id}')">세금계산서 발행</button>` : ''}
           <button class="ab" onclick="openPaymentModal('${p.id}')">✏️</button>
           <button class="ab danger" onclick="deletePayment('${p.id}')">🗑️</button>
         </div>
@@ -4059,6 +4138,36 @@ async function confirmPayment(id) {
   
   renderPartnerView();
   showToast('입금 완료 처리되었습니다.', 'success');
+}
+
+// 세금계산서 발행 처리 (낙관적 업데이트: 즉시 화면 반영 후 실패 시 롤백)
+async function confirmTaxInvoice(id) {
+  const p = db.partner_payments.find(x => x.id === id);
+  if(!p) return;
+  if(!confirm('세금계산서를 발행 처리하시겠습니까?')) return;
+
+  const today = new Date().toISOString().split('T')[0];
+  const prevStatus = p.tax_invoice_status;
+  const prevDate = p.tax_invoice_date;
+
+  p.tax_invoice_status = 'completed';
+  p.tax_invoice_date = today;
+  renderPartnerTable();
+
+  if(isDemoMode) {
+    showToast('세금계산서 발행 처리되었습니다.', 'success');
+    return;
+  }
+
+  const {error} = await sb.from('partner_payments').update({ tax_invoice_status:'completed', tax_invoice_date: today }).eq('id', id);
+  if(error) {
+    p.tax_invoice_status = prevStatus;
+    p.tax_invoice_date = prevDate;
+    renderPartnerTable();
+    showToast('세금계산서 발행 처리 실패, 되돌렸습니다.', 'error');
+    return;
+  }
+  showToast('세금계산서 발행 처리되었습니다.', 'success');
 }
 
 async function deletePayment(id) {
