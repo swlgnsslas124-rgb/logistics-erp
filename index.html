@@ -941,7 +941,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
                 <span class="alert-icon">⏰</span>
                 <span class="alert-title">입금·납부 임박</span>
               </div>
-              <div class="alert-sub">7일 이내 예정 또는 지연된 입금/납부 건</div>
+              <div class="alert-sub">파트너 청구 7일 · 고정비 10일 이내 예정 또는 지연된 건</div>
               <div class="alert-table">
                 <div class="alert-table-row header">
                   <span>구분</span><span>내용</span><span>기한</span>
@@ -1443,7 +1443,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           </div>
           <table>
             <thead><tr>
-              <th>법인</th><th>항목명</th><th>금액</th><th>납부일</th><th>상태</th><th>메모</th><th>작업</th>
+              <th>법인</th><th>항목명</th><th>금액</th><th>납부일</th><th>계좌번호</th><th>상태</th><th>메모</th><th>작업</th>
             </tr></thead>
             <tbody id="fixedexpense-tbody"></tbody>
           </table>
@@ -1964,7 +1964,13 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
         <div class="ff"><label>금액 (원) *</label><input type="number" id="fem-amount" placeholder="0" min="0" /></div>
       </div>
       <div class="ff-row">
-        <div class="ff"><label>납부일 *</label><input type="date" id="fem-due" /></div>
+        <div class="ff"><label>매월 납부일 *</label>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:13px;color:var(--c-text2);white-space:nowrap;">매월</span>
+            <input type="number" id="fem-due-day" placeholder="25" min="1" max="31" style="width:100%;" />
+            <span style="font-size:13px;color:var(--c-text2);white-space:nowrap;">일</span>
+          </div>
+        </div>
         <div class="ff"><label>상태</label>
           <select id="fem-status">
             <option value="pending">미납</option>
@@ -1972,6 +1978,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           </select>
         </div>
       </div>
+      <div class="ff"><label>계좌번호</label><input type="text" id="fem-account" placeholder="예: 123-456789-01-234" /></div>
       <div class="ff"><label>메모</label><input type="text" id="fem-memo" placeholder="메모" /></div>
       <input type="hidden" id="fem-id" />
     </div>
@@ -2200,8 +2207,8 @@ function getDemoData(){
       {id:'gb2', item_name:'탕수육 소스', vendor_contact:'다라식품 김영희 010-9876-5432', purchase_price:5000, sale_price:7500, status:'완료', created_at:'2024-07-01'}
     ],
     fixed_expenses:[
-      {id:'fe1', entity_id:'e1', expense_name:'주차비', amount:150000, due_date:'2026-08-25', status:'pending', memo:'', created_at:'2024-01-01'},
-      {id:'fe2', entity_id:'e1', expense_name:'렌트료', amount:800000, due_date:'2026-08-10', status:'paid', memo:'', created_at:'2024-01-01'}
+      {id:'fe1', entity_id:'e1', expense_name:'주차비', amount:150000, due_day:25, account_number:'123-456789-01-234', status:'pending', memo:'', created_at:'2024-01-01'},
+      {id:'fe2', entity_id:'e1', expense_name:'렌트료', amount:800000, due_day:10, account_number:'987-654321-09-876', status:'paid', memo:'', created_at:'2024-01-01'}
     ]
   };
 }
@@ -2353,7 +2360,7 @@ async function loadAllData(){
     sb.from('logistics_providers').select('*').order('company_name'),
     sb.from('bank_accounts').select('*').order('bank_name'),
     sb.from('group_buys').select('*').order('created_at',{ascending:false}),
-    sb.from('fixed_expenses').select('*').order('due_date',{ascending:false})
+    sb.from('fixed_expenses').select('*').order('due_day',{ascending:true})
   ]);
   if(e.error)throw e.error;
   db.entities=e.data||[];db.suppliers=s.data||[];db.items=i.data||[];
@@ -2496,22 +2503,25 @@ function renderDashboard(){
 
   // 입금·납부 임박 (파트너 청구 + 고정비)
   const today=new Date(); today.setHours(0,0,0,0);
-  const dueHorizon=new Date(today); dueHorizon.setDate(dueHorizon.getDate()+7);
+  const partnerHorizon=new Date(today); partnerHorizon.setDate(partnerHorizon.getDate()+7);
+  const feHorizon=new Date(today); feHorizon.setDate(feHorizon.getDate()+10);
   const dueItems=[];
   db.partner_payments.filter(p=>p.status==='pending').forEach(p=>{
     const parts=(p.billing_month||'').split('-');
     if(parts.length<2)return;
     const dueDate=new Date(Number(parts[0]),Number(parts[1])-1,10);
-    if(dueDate<=dueHorizon){
+    if(dueDate<=partnerHorizon){
       const brand=db.partner_brands.find(b=>b.id===p.brand_id);
       dueItems.push({type:'파트너 청구',name:brand?.name||'알수없음',date:dueDate,overdue:dueDate<today});
     }
   });
   db.fixed_expenses.filter(f=>f.status==='pending').forEach(f=>{
-    if(!f.due_date)return;
-    const dueDate=new Date(f.due_date);
-    if(dueDate<=dueHorizon){
-      dueItems.push({type:'고정비',name:`${eName(f.entity_id)} · ${f.expense_name}`,date:dueDate,overdue:dueDate<today});
+    if(!f.due_day)return;
+    const daysInMonth=new Date(today.getFullYear(),today.getMonth()+1,0).getDate();
+    const dueDate=new Date(today.getFullYear(),today.getMonth(),Math.min(Number(f.due_day),daysInMonth));
+    if(dueDate<=feHorizon){
+      const acctNote=f.account_number?` (${f.account_number})`:'';
+      dueItems.push({type:'고정비',name:`${eName(f.entity_id)} · ${f.expense_name}${acctNote}`,date:dueDate,overdue:dueDate<today});
     }
   });
   dueItems.sort((a,b)=>a.date-b.date);
@@ -4368,16 +4378,17 @@ function renderFixedExpensesView(){
   document.getElementById('fe-list-count').textContent = `(${db.fixed_expenses.length}건)`;
   const tbody = document.getElementById('fixedexpense-tbody');
   if(!db.fixed_expenses.length){
-    tbody.innerHTML = '<tr class="no-data-row"><td colspan="7"><div class="nd-icon">📭</div>등록된 고정비가 없습니다</td></tr>';
+    tbody.innerHTML = '<tr class="no-data-row"><td colspan="8"><div class="nd-icon">📭</div>등록된 고정비가 없습니다</td></tr>';
     return;
   }
-  tbody.innerHTML = [...db.fixed_expenses].sort((a,b)=>new Date(a.due_date)-new Date(b.due_date)).map(f=>{
+  tbody.innerHTML = [...db.fixed_expenses].sort((a,b)=>Number(a.due_day)-Number(b.due_day)).map(f=>{
     const statusBadge = f.status==='paid' ? '<span class="badge badge-green">완납</span>' : '<span class="badge badge-red">미납</span>';
     return `<tr>
       <td><span class="badge badge-blue">${eName(f.entity_id)}</span></td>
       <td><div class="td-name">${f.expense_name}</div></td>
       <td class="price-val">₩${Number(f.amount).toLocaleString()}</td>
-      <td style="font-size:12px;color:var(--c-text3)">${fmtDate(f.due_date)}</td>
+      <td style="font-size:12px;color:var(--c-text3)">매월 ${f.due_day}일</td>
+      <td style="font-size:12px;font-family:monospace;color:var(--c-text3)">${f.account_number||'-'}</td>
       <td>${statusBadge}</td>
       <td style="font-size:12px;color:var(--c-text3)">${f.memo||'-'}</td>
       <td><div class="act-btns">
@@ -4393,7 +4404,8 @@ function openFixedExpenseModal(id){
   document.getElementById('fem-entity').value = '';
   document.getElementById('fem-name').value = '주차비';
   document.getElementById('fem-amount').value = '';
-  document.getElementById('fem-due').value = '';
+  document.getElementById('fem-due-day').value = '';
+  document.getElementById('fem-account').value = '';
   document.getElementById('fem-status').value = 'pending';
   document.getElementById('fem-memo').value = '';
   if(id){
@@ -4403,7 +4415,8 @@ function openFixedExpenseModal(id){
       document.getElementById('fem-entity').value = f.entity_id;
       document.getElementById('fem-name').value = f.expense_name;
       document.getElementById('fem-amount').value = f.amount;
-      document.getElementById('fem-due').value = f.due_date;
+      document.getElementById('fem-due-day').value = f.due_day;
+      document.getElementById('fem-account').value = f.account_number||'';
       document.getElementById('fem-status').value = f.status;
       document.getElementById('fem-memo').value = f.memo||'';
     }
@@ -4415,13 +4428,14 @@ async function saveFixedExpense(){
   const entity_id = document.getElementById('fem-entity').value;
   const expense_name = document.getElementById('fem-name').value.trim();
   const amount = parseFloat(document.getElementById('fem-amount').value);
-  const due_date = document.getElementById('fem-due').value;
+  const due_day = parseInt(document.getElementById('fem-due-day').value);
+  const account_number = document.getElementById('fem-account').value.trim();
   const status = document.getElementById('fem-status').value;
   const memo = document.getElementById('fem-memo').value.trim();
   const editId = document.getElementById('fem-id').value;
 
-  if(!entity_id || !expense_name || isNaN(amount) || !due_date){ showToast('법인, 항목명, 금액, 납부일은 필수입니다.', 'error'); return; }
-  const rec = { entity_id, expense_name, amount, due_date, status, memo: memo||null };
+  if(!entity_id || !expense_name || isNaN(amount) || !due_day || due_day<1 || due_day>31){ showToast('법인, 항목명, 금액, 매월 납부일(1~31)은 필수입니다.', 'error'); return; }
+  const rec = { entity_id, expense_name, amount, due_day, account_number: account_number||null, status, memo: memo||null };
 
   if(isDemoMode){
     if(editId){ const idx=db.fixed_expenses.findIndex(f=>f.id===editId); if(idx>=0) db.fixed_expenses[idx]={...db.fixed_expenses[idx],...rec}; }

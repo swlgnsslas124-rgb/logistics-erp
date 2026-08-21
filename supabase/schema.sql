@@ -182,11 +182,26 @@ create table if not exists fixed_expenses (
   entity_id uuid not null references entities(id) on delete cascade,
   expense_name text not null default '주차비',
   amount numeric not null,
-  due_date date not null,
+  due_day integer not null default 1, -- 매월 납부일 (1~31)
+  account_number text,
   status text not null default 'pending', -- pending | paid
   memo text,
   created_at timestamptz not null default now()
 );
+
+-- 기존에 due_date(특정 날짜)로 만들어졌던 버전을 due_day(매월 며칠, 반복)로 전환 + 계좌번호 컬럼 추가
+do $$
+begin
+  if exists (select 1 from information_schema.columns where table_name='fixed_expenses' and column_name='due_date') then
+    alter table fixed_expenses add column if not exists due_day integer;
+    alter table fixed_expenses add column if not exists account_number text;
+    update fixed_expenses set due_day = extract(day from due_date)::int where due_day is null and due_date is not null;
+    update fixed_expenses set due_day = 1 where due_day is null;
+    alter table fixed_expenses alter column due_day set default 1;
+    alter table fixed_expenses alter column due_day set not null;
+    alter table fixed_expenses drop column due_date;
+  end if;
+end $$;
 
 -- ========== RLS: 전체 공개 조회 + 로그인 사용자만 등록/수정/삭제 ==========
 do $$
