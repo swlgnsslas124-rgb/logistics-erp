@@ -2140,7 +2140,7 @@ function latestPrice(itemId,entityId){
 
 // 마진 현황 화면의 법인 필터 탭에는 아래 키워드가 포함된 법인만 표시합니다.
 // (다른 화면들 — 법인·공급처 관리, 직원 등록 등 — 에는 영향 없음, 데이터도 삭제되지 않음)
-const MARGIN_TAB_KEEP_KEYWORDS=['레버프랜','레버에프앤비'];
+const MARGIN_TAB_KEEP_KEYWORDS=['레버프랜','레버에프앤비','소스형제들'];
 function buildEntityTabs(){
   const g=document.getElementById('entity-filter-tabs');
   g.innerHTML='<button class="ftab active" onclick="filterMargin(\'entity\',null,this)">전체</button>';
