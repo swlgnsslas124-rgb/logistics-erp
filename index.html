@@ -1068,7 +1068,8 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
             <thead><tr>
               <th class="sortable-th" onclick="toggleMarginSort('name')">품목명 <span class="sort-icon" id="ms-icon-name">⇅</span></th>
               <th class="sortable-th" onclick="toggleMarginSort('category')">카테고리 <span class="sort-icon" id="ms-icon-category">⇅</span></th>
-              <th>법인</th><th>공급처</th>
+              <th class="sortable-th" onclick="toggleMarginSort('entity')">법인 <span class="sort-icon" id="ms-icon-entity">⇅</span></th>
+              <th>공급처</th>
               <th class="sortable-th" onclick="toggleMarginSort('cost')">원가 <span class="sort-icon" id="ms-icon-cost">⇅</span></th>
               <th class="sortable-th" onclick="toggleMarginSort('purchase')">매입가 <span class="sort-icon" id="ms-icon-purchase">⇅</span></th>
               <th class="sortable-th" onclick="toggleMarginSort('sale')">판매가 <span class="sort-icon" id="ms-icon-sale">⇅</span></th>
@@ -1203,7 +1204,12 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           </div>
           <table>
             <thead><tr>
-              <th>품목명</th><th>단위</th><th>카테고리</th><th>공급처</th><th>등록일</th><th>작업</th>
+              <th class="sortable-th" onclick="toggleItemsSort('name')">품목명 <span class="sort-icon" id="items-icon-name">⇅</span></th>
+              <th class="sortable-th" onclick="toggleItemsSort('unit')">단위 <span class="sort-icon" id="items-icon-unit">⇅</span></th>
+              <th class="sortable-th" onclick="toggleItemsSort('category')">카테고리 <span class="sort-icon" id="items-icon-category">⇅</span></th>
+              <th class="sortable-th" onclick="toggleItemsSort('supplier')">공급처 <span class="sort-icon" id="items-icon-supplier">⇅</span></th>
+              <th class="sortable-th" onclick="toggleItemsSort('created')">등록일 <span class="sort-icon" id="items-icon-created">⇅</span></th>
+              <th>작업</th>
             </tr></thead>
             <tbody id="items-tbody"></tbody>
           </table>
@@ -1304,7 +1310,12 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           </div>
           <table>
             <thead><tr>
-              <th>청구월</th><th>브랜드명</th><th>청구금액</th><th>상태</th><th>입금일</th><th>세금계산서</th><th>비고</th><th>작업</th>
+              <th class="sortable-th" onclick="togglePartnerSort('month')">청구월 <span class="sort-icon" id="pt-icon-month">⇅</span></th>
+              <th class="sortable-th" onclick="togglePartnerSort('brand')">브랜드명 <span class="sort-icon" id="pt-icon-brand">⇅</span></th>
+              <th class="sortable-th" onclick="togglePartnerSort('amount')">청구금액 <span class="sort-icon" id="pt-icon-amount">⇅</span></th>
+              <th>상태</th>
+              <th class="sortable-th" onclick="togglePartnerSort('paid')">입금일 <span class="sort-icon" id="pt-icon-paid">⇅</span></th>
+              <th>세금계산서</th><th>비고</th><th>작업</th>
             </tr></thead>
             <tbody id="partner-tbody"></tbody>
           </table>
@@ -1330,7 +1341,12 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           </div>
           <table>
             <thead><tr>
-              <th>품목명</th><th>거래처 담당자</th><th>매입가</th><th>판매가</th><th>마진</th><th>상태</th><th>작업</th>
+              <th class="sortable-th" onclick="toggleGroupBuySort('item')">품목명 <span class="sort-icon" id="gb-icon-item">⇅</span></th>
+              <th class="sortable-th" onclick="toggleGroupBuySort('vendor')">거래처 담당자 <span class="sort-icon" id="gb-icon-vendor">⇅</span></th>
+              <th class="sortable-th" onclick="toggleGroupBuySort('purchase')">매입가 <span class="sort-icon" id="gb-icon-purchase">⇅</span></th>
+              <th class="sortable-th" onclick="toggleGroupBuySort('sale')">판매가 <span class="sort-icon" id="gb-icon-sale">⇅</span></th>
+              <th class="sortable-th" onclick="toggleGroupBuySort('margin')">마진 <span class="sort-icon" id="gb-icon-margin">⇅</span></th>
+              <th>상태</th><th>작업</th>
             </tr></thead>
             <tbody id="groupbuy-tbody"></tbody>
           </table>
@@ -1367,7 +1383,15 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
         <div class="table-card" style="margin-bottom:30px;">
           <table>
             <thead><tr>
-              <th>법인</th><th>이름</th><th>직급</th><th>연락처</th><th>이메일</th><th>생년월일</th><th>입사일</th><th>상태</th><th>연차(부여/사용/잔여)</th><th>급여</th><th>작업</th>
+              <th class="sortable-th" onclick="toggleEmpSort('entity')">법인 <span class="sort-icon" id="emp-icon-entity">⇅</span></th>
+              <th class="sortable-th" onclick="toggleEmpSort('name')">이름 <span class="sort-icon" id="emp-icon-name">⇅</span></th>
+              <th class="sortable-th" onclick="toggleEmpSort('position')">직급 <span class="sort-icon" id="emp-icon-position">⇅</span></th>
+              <th>연락처</th><th>이메일</th>
+              <th class="sortable-th" onclick="toggleEmpSort('birth')">생년월일 <span class="sort-icon" id="emp-icon-birth">⇅</span></th>
+              <th class="sortable-th" onclick="toggleEmpSort('hire')">입사일 <span class="sort-icon" id="emp-icon-hire">⇅</span></th>
+              <th>상태</th><th>연차(부여/사용/잔여)</th>
+              <th class="sortable-th" onclick="toggleEmpSort('salary')">급여 <span class="sort-icon" id="emp-icon-salary">⇅</span></th>
+              <th>작업</th>
             </tr></thead>
             <tbody id="hr-emp-tbody"></tbody>
           </table>
@@ -1381,7 +1405,13 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
         <div class="table-card">
           <table>
             <thead><tr>
-              <th>법인</th><th>직원</th><th>구분</th><th>시작일</th><th>종료일</th><th>일수</th><th>비고</th><th>작업</th>
+              <th class="sortable-th" onclick="toggleLeaveSort('entity')">법인 <span class="sort-icon" id="lv-icon-entity">⇅</span></th>
+              <th class="sortable-th" onclick="toggleLeaveSort('employee')">직원 <span class="sort-icon" id="lv-icon-employee">⇅</span></th>
+              <th class="sortable-th" onclick="toggleLeaveSort('type')">구분 <span class="sort-icon" id="lv-icon-type">⇅</span></th>
+              <th class="sortable-th" onclick="toggleLeaveSort('start')">시작일 <span class="sort-icon" id="lv-icon-start">⇅</span></th>
+              <th class="sortable-th" onclick="toggleLeaveSort('end')">종료일 <span class="sort-icon" id="lv-icon-end">⇅</span></th>
+              <th class="sortable-th" onclick="toggleLeaveSort('days')">일수 <span class="sort-icon" id="lv-icon-days">⇅</span></th>
+              <th>비고</th><th>작업</th>
             </tr></thead>
             <tbody id="hr-leave-tbody"></tbody>
           </table>
@@ -1418,7 +1448,11 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
         <div class="table-card" style="margin-bottom:30px;">
           <table>
             <thead><tr>
-              <th>법인</th><th>은행</th><th>통장명</th><th>계좌번호</th><th>비밀번호 (클릭해서 보기)</th><th>상태</th><th>기타</th><th>작업</th>
+              <th class="sortable-th" onclick="toggleBankSort('entity')">법인 <span class="sort-icon" id="bank-icon-entity">⇅</span></th>
+              <th class="sortable-th" onclick="toggleBankSort('bank')">은행 <span class="sort-icon" id="bank-icon-bank">⇅</span></th>
+              <th class="sortable-th" onclick="toggleBankSort('name')">통장명 <span class="sort-icon" id="bank-icon-name">⇅</span></th>
+              <th class="sortable-th" onclick="toggleBankSort('number')">계좌번호 <span class="sort-icon" id="bank-icon-number">⇅</span></th>
+              <th>비밀번호 (클릭해서 보기)</th><th>상태</th><th>기타</th><th>작업</th>
             </tr></thead>
             <tbody id="acc-bank-tbody"></tbody>
           </table>
@@ -1431,7 +1465,14 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
         <div class="table-card">
           <table>
             <thead><tr>
-              <th>법인</th><th>카드명</th><th>카드사</th><th>카드정보 (클릭해서 보기)</th><th>사용자</th><th>상태</th><th>발급일</th><th>메모</th><th>작업</th>
+              <th class="sortable-th" onclick="toggleCardSort('entity')">법인 <span class="sort-icon" id="card-icon-entity">⇅</span></th>
+              <th class="sortable-th" onclick="toggleCardSort('name')">카드명 <span class="sort-icon" id="card-icon-name">⇅</span></th>
+              <th class="sortable-th" onclick="toggleCardSort('company')">카드사 <span class="sort-icon" id="card-icon-company">⇅</span></th>
+              <th>카드정보 (클릭해서 보기)</th>
+              <th class="sortable-th" onclick="toggleCardSort('holder')">사용자 <span class="sort-icon" id="card-icon-holder">⇅</span></th>
+              <th>상태</th>
+              <th class="sortable-th" onclick="toggleCardSort('issued')">발급일 <span class="sort-icon" id="card-icon-issued">⇅</span></th>
+              <th>메모</th><th>작업</th>
             </tr></thead>
             <tbody id="acc-card-tbody"></tbody>
           </table>
@@ -1457,7 +1498,12 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           </div>
           <table>
             <thead><tr>
-              <th>법인</th><th>항목명</th><th>금액</th><th>납부일</th><th>계좌번호</th><th>상태</th><th>메모</th><th>작업</th>
+              <th class="sortable-th" onclick="toggleFeSort('entity')">법인 <span class="sort-icon" id="fe-icon-entity">⇅</span></th>
+              <th class="sortable-th" onclick="toggleFeSort('name')">항목명 <span class="sort-icon" id="fe-icon-name">⇅</span></th>
+              <th class="sortable-th" onclick="toggleFeSort('amount')">금액 <span class="sort-icon" id="fe-icon-amount">⇅</span></th>
+              <th class="sortable-th" onclick="toggleFeSort('due')">납부일 <span class="sort-icon" id="fe-icon-due">⇅</span></th>
+              <th class="sortable-th" onclick="toggleFeSort('account')">계좌번호 <span class="sort-icon" id="fe-icon-account">⇅</span></th>
+              <th>상태</th><th>메모</th><th>작업</th>
             </tr></thead>
             <tbody id="fixedexpense-tbody"></tbody>
           </table>
@@ -2623,34 +2669,36 @@ function renderMarginView(){
   window._allRows=all;
 }
 
-// 숫자/콤마 포함 문자열을 안전하게 숫자로 변환 (파싱 불가하면 NaN)
+// ==================== 공통 테이블 정렬 유틸 (모든 테이블 공용, React의 useSortableTable 훅에 대응) ====================
+// 사용법: 테이블마다 sortState({field:null,dir:'asc'})와 columns 정의({field:{type,get}})를 만들고
+// toggleTableSort/sortTableRows/updateSortIcons 세 함수만 재사용하면 된다.
+
+// 숫자/콤마/₩ 등 통화기호 포함 문자열을 안전하게 숫자로 변환 (파싱 불가하면 NaN)
 function toNum(v){
   if(v===null||v===undefined||v==='')return NaN;
   if(typeof v==='number')return v;
   const n=parseFloat(String(v).replace(/,/g,'').replace(/[^0-9.\-]/g,''));
   return n;
 }
-
-const MARGIN_SORT_NUMERIC_FIELDS=['cost','purchase','sale','margin','date'];
-function getMarginSortValue(row,field){
-  switch(field){
-    case 'name': return row.item.name||'';
-    case 'category': return row.item.category||'';
-    case 'cost': return toNum(row.item.cost_price);
-    case 'purchase': return toNum(row.price?.purchase_price);
-    case 'sale': return toNum(row.price?.sale_price);
-    case 'margin': return toNum(row.rm);
-    case 'date': return row.price?.effective_date?new Date(row.price.effective_date).getTime():NaN;
-    default: return null;
-  }
+// 날짜 문자열/Date를 정렬 가능한 timestamp로 변환 (파싱 불가하면 NaN)
+function toDateNum(v){
+  if(!v)return NaN;
+  const t=new Date(v).getTime();
+  return isNaN(t)?NaN:t;
 }
-// rows를 직접 변경하지 않고 정렬된 새 배열을 반환 (재사용 가능한 공통 정렬 함수)
-function sortRowsBy(rows,field,dir){
-  if(!field)return rows;
-  const mul=dir==='asc'?1:-1;
-  const numeric=MARGIN_SORT_NUMERIC_FIELDS.includes(field);
+
+// columns: { field: {type:'text'|'number'|'date', get:(row)=>value} }
+// rows는 변경하지 않고 정렬된 새 배열을 반환한다.
+function sortTableRows(rows,sortState,columns){
+  const field=sortState.field;
+  if(!field||!columns[field])return rows;
+  const col=columns[field];
+  const mul=sortState.dir==='asc'?1:-1;
+  const numeric=col.type==='number'||col.type==='date';
   return [...rows].sort((a,b)=>{
-    const va=getMarginSortValue(a,field),vb=getMarginSortValue(b,field);
+    let va=col.get(a),vb=col.get(b);
+    if(col.type==='number'){va=toNum(va);vb=toNum(vb)}
+    else if(col.type==='date'){va=toDateNum(va);vb=toDateNum(vb)}
     if(numeric){
       const na=typeof va==='number'&&!isNaN(va),nb=typeof vb==='number'&&!isNaN(vb);
       if(!na&&!nb)return 0;
@@ -2658,30 +2706,44 @@ function sortRowsBy(rows,field,dir){
       if(!nb)return -1;
       return (va-vb)*mul;
     }
-    return String(va).localeCompare(String(vb),'ko')*mul;
+    return String(va??'').localeCompare(String(vb??''),'ko')*mul;
   });
 }
-function toggleMarginSort(field){
-  if(marginSort.field===field){marginSort.dir=marginSort.dir==='asc'?'desc':'asc'}
-  else{marginSort={field,dir:'asc'}}
-  renderMarginTable(window._allRows||[]);
+// 헤더 클릭 시 호출: 같은 컬럼이면 asc<->desc 토글, 다른 컬럼이면 asc로 새로 시작
+function toggleTableSort(sortState,field,rerenderFn){
+  if(sortState.field===field){sortState.dir=sortState.dir==='asc'?'desc':'asc'}
+  else{sortState.field=field;sortState.dir='asc'}
+  rerenderFn();
 }
-function updateMarginSortIcons(){
-  ['name','category','cost','purchase','sale','margin','date'].forEach(f=>{
-    const el=document.getElementById('ms-icon-'+f);
+// 헤더의 정렬 아이콘(⇅/▲/▼) 갱신. iconIdPrefix + '-' + field 형태의 id를 가진 span을 찾는다.
+function updateSortIcons(sortState,fields,iconIdPrefix){
+  fields.forEach(f=>{
+    const el=document.getElementById(iconIdPrefix+'-'+f);
     if(!el)return;
-    if(marginSort.field===f){el.textContent=marginSort.dir==='asc'?'▲':'▼';el.classList.add('active')}
+    if(sortState.field===f){el.textContent=sortState.dir==='asc'?'▲':'▼';el.classList.add('active')}
     else{el.textContent='⇅';el.classList.remove('active')}
   });
 }
+
+const MARGIN_SORT_COLUMNS={
+  name:{type:'text',get:r=>r.item.name},
+  category:{type:'text',get:r=>r.item.category},
+  entity:{type:'text',get:r=>r.entity?.name},
+  cost:{type:'number',get:r=>r.item.cost_price},
+  purchase:{type:'number',get:r=>r.price?.purchase_price},
+  sale:{type:'number',get:r=>r.price?.sale_price},
+  margin:{type:'number',get:r=>r.rm},
+  date:{type:'date',get:r=>r.price?.effective_date}
+};
+function toggleMarginSort(field){toggleTableSort(marginSort,field,()=>renderMarginTable(window._allRows||[]))}
 
 function renderMarginTable(all){
   let rows=[...all];
   if(mf.entity)rows=rows.filter(r=>r.entity?.id===mf.entity);
   if(mf.cat)rows=rows.filter(r=>r.item.category===mf.cat);
   if(mf.search)rows=rows.filter(r=>r.item.name.includes(mf.search));
-  rows=sortRowsBy(rows,marginSort.field,marginSort.dir);
-  updateMarginSortIcons();
+  rows=sortTableRows(rows,marginSort,MARGIN_SORT_COLUMNS);
+  updateSortIcons(marginSort,Object.keys(MARGIN_SORT_COLUMNS),'ms-icon');
   document.getElementById('m-count').textContent=` ${rows.length}개`;
   const tbody=document.getElementById('margin-tbody');
   if(!rows.length){
@@ -2834,10 +2896,22 @@ async function loadSpecHistory(){
     </div>`).join('');
 }
 
+let itemsSort={field:null,dir:'asc'};
+const ITEMS_SORT_COLUMNS={
+  name:{type:'text',get:i=>i.name},
+  unit:{type:'text',get:i=>i.unit},
+  category:{type:'text',get:i=>i.category},
+  supplier:{type:'text',get:i=>sName(i.supplier_id)},
+  created:{type:'date',get:i=>i.created_at}
+};
+function toggleItemsSort(field){toggleTableSort(itemsSort,field,renderItemsView)}
+
 function renderItemsView(){
   let rows=[...db.items];
   if(itemFilter.cat!=='all')rows=rows.filter(i=>i.category===itemFilter.cat);
   if(itemFilter.search)rows=rows.filter(i=>i.name.includes(itemFilter.search));
+  rows=sortTableRows(rows,itemsSort,ITEMS_SORT_COLUMNS);
+  updateSortIcons(itemsSort,Object.keys(ITEMS_SORT_COLUMNS),'items-icon');
   document.getElementById('items-count').textContent=` ${rows.length}개`;
   const tbody=document.getElementById('items-tbody');
   if(!rows.length){tbody.innerHTML='<tr class="no-data-row"><td colspan="6"><div class="nd-icon">📭</div>품목이 없습니다</td></tr>';return}
@@ -2945,6 +3019,28 @@ function leaveUsedDays(employeeId){
   return db.leave_logs.filter(l=>l.employee_id===employeeId).reduce((sum,l)=>sum+Number(l.days),0);
 }
 
+let empSort={field:null,dir:'asc'};
+const EMP_SORT_COLUMNS={
+  entity:{type:'text',get:emp=>eName(emp.entity_id)},
+  name:{type:'text',get:emp=>emp.name},
+  position:{type:'text',get:emp=>emp.position},
+  birth:{type:'date',get:emp=>emp.birth_date},
+  hire:{type:'date',get:emp=>emp.hire_date},
+  salary:{type:'number',get:emp=>emp.salary}
+};
+function toggleEmpSort(field){toggleTableSort(empSort,field,renderHRView)}
+
+let leaveSort={field:null,dir:'asc'};
+const LEAVE_SORT_COLUMNS={
+  entity:{type:'text',get:l=>{const emp=db.employees.find(e=>e.id===l.employee_id);return emp?eName(emp.entity_id):''}},
+  employee:{type:'text',get:l=>db.employees.find(e=>e.id===l.employee_id)?.name},
+  type:{type:'text',get:l=>l.leave_type},
+  start:{type:'date',get:l=>l.start_date},
+  end:{type:'date',get:l=>l.end_date},
+  days:{type:'number',get:l=>l.days}
+};
+function toggleLeaveSort(field){toggleTableSort(leaveSort,field,renderHRView)}
+
 function renderHRView(){
   const total=db.employees.length;
   const active=db.employees.filter(e=>e.status==='active').length;
@@ -2963,7 +3059,10 @@ function renderHRView(){
   if(!total){
     empTbody.innerHTML='<tr class="no-data-row"><td colspan="11"><div class="nd-icon">📭</div>등록된 직원이 없습니다</td></tr>';
   }else{
-    empTbody.innerHTML=[...db.employees].sort((a,b)=>eName(a.entity_id).localeCompare(eName(b.entity_id))).map(emp=>{
+    let empRows=[...db.employees].sort((a,b)=>eName(a.entity_id).localeCompare(eName(b.entity_id)));
+    empRows=sortTableRows(empRows,empSort,EMP_SORT_COLUMNS);
+    updateSortIcons(empSort,Object.keys(EMP_SORT_COLUMNS),'emp-icon');
+    empTbody.innerHTML=empRows.map(emp=>{
       const used=leaveUsedDays(emp.id);
       const total_l=Number(emp.annual_leave_total||0);
       const remain=total_l-used;
@@ -3003,7 +3102,9 @@ function renderHRView(){
   if(!filteredLeaves.length){
     leaveTbody.innerHTML='<tr class="no-data-row"><td colspan="8"><div class="nd-icon">📭</div>연차 사용 내역이 없습니다</td></tr>';
   }else{
-    const sortedLeaves=[...filteredLeaves].sort((a,b)=>new Date(b.start_date)-new Date(a.start_date));
+    let sortedLeaves=[...filteredLeaves].sort((a,b)=>new Date(b.start_date)-new Date(a.start_date));
+    sortedLeaves=sortTableRows(sortedLeaves,leaveSort,LEAVE_SORT_COLUMNS);
+    updateSortIcons(leaveSort,Object.keys(LEAVE_SORT_COLUMNS),'lv-icon');
     leaveTbody.innerHTML=sortedLeaves.map(l=>{
       const emp=db.employees.find(e=>e.id===l.employee_id);
       return `<tr>
@@ -3025,6 +3126,25 @@ function renderHRView(){
 
 // ==================== 계좌 관리 (계좌 + 법인카드) ====================
 
+let bankSort={field:null,dir:'asc'};
+const BANK_SORT_COLUMNS={
+  entity:{type:'text',get:a=>eName(a.entity_id)},
+  bank:{type:'text',get:a=>a.bank_name},
+  name:{type:'text',get:a=>a.account_name},
+  number:{type:'text',get:a=>a.account_number}
+};
+function toggleBankSort(field){toggleTableSort(bankSort,field,renderAccountsView)}
+
+let cardSort={field:null,dir:'asc'};
+const CARD_SORT_COLUMNS={
+  entity:{type:'text',get:c=>eName(c.entity_id)},
+  name:{type:'text',get:c=>c.card_name},
+  company:{type:'text',get:c=>c.card_company},
+  holder:{type:'text',get:c=>db.employees.find(e=>e.id===c.holder_employee_id)?.name},
+  issued:{type:'date',get:c=>c.issued_date}
+};
+function toggleCardSort(field){toggleTableSort(cardSort,field,renderAccountsView)}
+
 function renderAccountsView(){
   // 계좌 KPI
   const totalBank=db.bank_accounts.length;
@@ -3043,7 +3163,10 @@ function renderAccountsView(){
   if(!totalBank){
     bankTbody.innerHTML='<tr class="no-data-row"><td colspan="8"><div class="nd-icon">📭</div>등록된 계좌가 없습니다</td></tr>';
   }else{
-    bankTbody.innerHTML=[...db.bank_accounts].sort((a,b)=>eName(a.entity_id).localeCompare(eName(b.entity_id))||(a.bank_name||'').localeCompare(b.bank_name||'')).map(a=>{
+    let bankRows=[...db.bank_accounts].sort((a,b)=>eName(a.entity_id).localeCompare(eName(b.entity_id))||(a.bank_name||'').localeCompare(b.bank_name||''));
+    bankRows=sortTableRows(bankRows,bankSort,BANK_SORT_COLUMNS);
+    updateSortIcons(bankSort,Object.keys(BANK_SORT_COLUMNS),'bank-icon');
+    bankTbody.innerHTML=bankRows.map(a=>{
       const statusBadge=a.status==='active'?'<span class="badge badge-green">사용</span>':'<span class="badge badge-gray">미사용</span>';
       const maskedHtml=`<span id="bank-pw-masked-${a.id}" style="font-family:monospace">${a.account_password?'••••••••':'-'}</span>`;
       const fullHtml=`<span id="bank-pw-full-${a.id}" style="font-family:monospace;display:none">${a.account_password||'-'}</span>`;
@@ -3072,7 +3195,9 @@ function renderAccountsView(){
   if(!db.corporate_cards.length){
     cardTbody.innerHTML='<tr class="no-data-row"><td colspan="9"><div class="nd-icon">📭</div>등록된 법인카드가 없습니다</td></tr>';
   }else{
-    cardTbody.innerHTML=db.corporate_cards.map(c=>{
+    let cardRows=sortTableRows([...db.corporate_cards],cardSort,CARD_SORT_COLUMNS);
+    updateSortIcons(cardSort,Object.keys(CARD_SORT_COLUMNS),'card-icon');
+    cardTbody.innerHTML=cardRows.map(c=>{
       const holder=db.employees.find(e=>e.id===c.holder_employee_id);
       const statusBadge=c.status==='in_use'?'<span class="badge badge-green">사용중</span>':'<span class="badge badge-gray">반납</span>';
       const last4=c.card_number_last4||(c.card_number?c.card_number.slice(-4):'');
@@ -4064,6 +4189,15 @@ function filterPartner(type, btn){
   renderPartnerTable();
 }
 
+let partnerSort={field:null,dir:'asc'};
+const PARTNER_SORT_COLUMNS={
+  month:{type:'date',get:p=>p.billing_month},
+  brand:{type:'text',get:p=>db.partner_brands.find(b=>b.id===p.brand_id)?.name},
+  amount:{type:'number',get:p=>p.amount},
+  paid:{type:'date',get:p=>p.paid_date}
+};
+function togglePartnerSort(field){toggleTableSort(partnerSort,field,renderPartnerTable)}
+
 function renderPartnerTable(){
   let rows = [...db.partner_payments];
 
@@ -4072,7 +4206,9 @@ function renderPartnerTable(){
   else if(partnerFilter === 'completed') rows = rows.filter(p => p.status === 'completed');
 
   rows.sort((a,b) => new Date(b.billing_month) - new Date(a.billing_month) || a.brand_id.localeCompare(b.brand_id));
-  
+  rows = sortTableRows(rows, partnerSort, PARTNER_SORT_COLUMNS);
+  updateSortIcons(partnerSort, Object.keys(PARTNER_SORT_COLUMNS), 'pt-icon');
+
   document.getElementById('pt-list-count').textContent = ` ${rows.length}건`;
   const tbody = document.getElementById('partner-tbody');
   
@@ -4408,6 +4544,16 @@ async function deleteAccount(accId) {
 }
 
 // GROUP BUY (공동구매)
+let groupBuySort={field:null,dir:'asc'};
+const GROUPBUY_SORT_COLUMNS={
+  item:{type:'text',get:g=>g.item_name},
+  vendor:{type:'text',get:g=>g.vendor_contact},
+  purchase:{type:'number',get:g=>g.purchase_price},
+  sale:{type:'number',get:g=>g.sale_price},
+  margin:{type:'number',get:g=>Number(g.sale_price)-Number(g.purchase_price)}
+};
+function toggleGroupBuySort(field){toggleTableSort(groupBuySort,field,renderGroupBuysView)}
+
 function renderGroupBuysView(){
   document.getElementById('gb-list-count').textContent = `(${db.group_buys.length}건)`;
   const tbody = document.getElementById('groupbuy-tbody');
@@ -4415,7 +4561,10 @@ function renderGroupBuysView(){
     tbody.innerHTML = '<tr class="no-data-row"><td colspan="7"><div class="nd-icon">📭</div>등록된 공동구매가 없습니다</td></tr>';
     return;
   }
-  tbody.innerHTML = [...db.group_buys].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).map(g=>{
+  let gbRows=[...db.group_buys].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  gbRows=sortTableRows(gbRows,groupBuySort,GROUPBUY_SORT_COLUMNS);
+  updateSortIcons(groupBuySort,Object.keys(GROUPBUY_SORT_COLUMNS),'gb-icon');
+  tbody.innerHTML = gbRows.map(g=>{
     const margin = Number(g.sale_price) - Number(g.purchase_price);
     const statusBadge = g.status==='완료' ? '<span class="badge badge-green">완료</span>' : '<span class="badge badge-amber">진행중</span>';
     return `<tr>
@@ -4483,6 +4632,16 @@ async function deleteGroupBuy(id){
 }
 
 // FIXED EXPENSE (고정비)
+let feSort={field:null,dir:'asc'};
+const FE_SORT_COLUMNS={
+  entity:{type:'text',get:f=>eName(f.entity_id)},
+  name:{type:'text',get:f=>f.expense_name},
+  amount:{type:'number',get:f=>f.amount},
+  due:{type:'number',get:f=>f.due_day},
+  account:{type:'text',get:f=>f.account_number}
+};
+function toggleFeSort(field){toggleTableSort(feSort,field,renderFixedExpensesView)}
+
 function renderFixedExpensesView(){
   document.getElementById('fe-list-count').textContent = `(${db.fixed_expenses.length}건)`;
   const tbody = document.getElementById('fixedexpense-tbody');
@@ -4490,7 +4649,10 @@ function renderFixedExpensesView(){
     tbody.innerHTML = '<tr class="no-data-row"><td colspan="8"><div class="nd-icon">📭</div>등록된 고정비가 없습니다</td></tr>';
     return;
   }
-  tbody.innerHTML = [...db.fixed_expenses].sort((a,b)=>Number(a.due_day)-Number(b.due_day)).map(f=>{
+  let feRows=[...db.fixed_expenses].sort((a,b)=>Number(a.due_day)-Number(b.due_day));
+  feRows=sortTableRows(feRows,feSort,FE_SORT_COLUMNS);
+  updateSortIcons(feSort,Object.keys(FE_SORT_COLUMNS),'fe-icon');
+  tbody.innerHTML = feRows.map(f=>{
     const statusBadge = f.status==='paid' ? '<span class="badge badge-green">완납</span>' : '<span class="badge badge-red">미납</span>';
     return `<tr>
       <td><span class="badge badge-blue">${eName(f.entity_id)}</span></td>
