@@ -1302,6 +1302,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           <h2 style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;">🗓️ 연차 사용 내역 <span class="tc-count" id="hr-leave-count-badge"></span></h2>
           <button class="btn btn-primary btn-sm" onclick="openLeaveModal()">+ 연차 사용 등록</button>
         </div>
+        <div class="filter-tabs" id="hr-leave-month-tabs" style="margin-bottom:14px;flex-wrap:wrap;"></div>
         <div class="table-card">
           <table>
             <thead><tr>
@@ -1686,7 +1687,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
             <option value="기타">기타</option>
           </select>
         </div>
-        <div class="ff"><label>사용 일수 *</label><input type="number" id="lm-days" placeholder="1" min="0.5" step="0.5" /></div>
+        <div class="ff"><label>사용 일수 *</label><input type="number" id="lm-days" placeholder="1" min="0.25" step="0.25" /></div>
       </div>
       <div class="ff-row">
         <div class="ff"><label>시작일 *</label><input type="date" id="lm-start" /></div>
@@ -1932,6 +1933,7 @@ let partnerFilter = 'all';
 let partnerChartObj = null;
 let hrTab = 'employees';
 let hrEntityFilter = null;
+let hrLeaveMonth = null;
 
 function getDemoData(){
   return {
@@ -2677,13 +2679,23 @@ function renderHRView(){
     }).join('');
   }
 
-  // 연차 사용 내역
-  document.getElementById('hr-leave-count-badge').textContent=`(${db.leave_logs.length}건)`;
+  // 연차 사용 내역 (월별 탭)
+  const leaveMonths=[...new Set(db.leave_logs.map(l=>(l.start_date||'').slice(0,7)).filter(Boolean))].sort();
+  if(hrLeaveMonth===null){hrLeaveMonth=leaveMonths.length?leaveMonths[leaveMonths.length-1]:'all'}
+  if(hrLeaveMonth!=='all'&&!leaveMonths.includes(hrLeaveMonth)){hrLeaveMonth=leaveMonths.length?leaveMonths[leaveMonths.length-1]:'all'}
+  const monthTabsEl=document.getElementById('hr-leave-month-tabs');
+  monthTabsEl.innerHTML=`<button class="ftab${hrLeaveMonth==='all'?' active':''}" onclick="filterLeaveMonth('all')">전체</button>`+
+    leaveMonths.map(m=>{
+      const[y,mo]=m.split('-');
+      return `<button class="ftab${hrLeaveMonth===m?' active':''}" onclick="filterLeaveMonth('${m}')">${y}년 ${Number(mo)}월</button>`;
+    }).join('');
+  const filteredLeaves=hrLeaveMonth==='all'?db.leave_logs:db.leave_logs.filter(l=>(l.start_date||'').startsWith(hrLeaveMonth));
+  document.getElementById('hr-leave-count-badge').textContent=`(${filteredLeaves.length}건)`;
   const leaveTbody=document.getElementById('hr-leave-tbody');
-  if(!db.leave_logs.length){
+  if(!filteredLeaves.length){
     leaveTbody.innerHTML='<tr class="no-data-row"><td colspan="8"><div class="nd-icon">📭</div>연차 사용 내역이 없습니다</td></tr>';
   }else{
-    const sortedLeaves=[...db.leave_logs].sort((a,b)=>new Date(b.start_date)-new Date(a.start_date));
+    const sortedLeaves=[...filteredLeaves].sort((a,b)=>new Date(b.start_date)-new Date(a.start_date));
     leaveTbody.innerHTML=sortedLeaves.map(l=>{
       const emp=db.employees.find(e=>e.id===l.employee_id);
       return `<tr>
@@ -2779,6 +2791,11 @@ function renderAccountsView(){
       </tr>`;
     }).join('');
   }
+}
+
+function filterLeaveMonth(val){
+  hrLeaveMonth=val;
+  renderHRView();
 }
 
 function toggleCardReveal(id){
