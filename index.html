@@ -796,6 +796,9 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
       <button class="nav-item" id="nav-hr" onclick="showView('hr')">
         <span class="ni">🧑‍💼</span> 인사 관리
       </button>
+      <button class="nav-item" id="nav-accounts" onclick="showView('accounts')">
+        <span class="ni">🏦</span> 계좌 관리
+      </button>
       <button class="nav-item" id="nav-logistics" onclick="showView('logistics')">
         <span class="ni">🚚</span> 물류업체 관리
       </button>
@@ -1265,7 +1268,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
       <div class="page-header">
         <div class="page-title-wrap">
           <div class="page-title">인사 관리</div>
-          <div class="page-subtitle">법인별 직원 · 연차 · 법인카드 관리</div>
+          <div class="page-subtitle">법인별 직원 · 연차 관리</div>
         </div>
       </div>
       <div class="page-body">
@@ -1279,11 +1282,6 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
             <div class="kpi-label">이번달 연차 사용</div>
             <div class="kpi-value green" id="hr-month-leave">-</div>
             <div class="kpi-sub" id="hr-month-label">-</div>
-          </div>
-          <div class="kpi-card amber">
-            <div class="kpi-label">사용중 법인카드</div>
-            <div class="kpi-value amber" id="hr-cards-inuse">-</div>
-            <div class="kpi-sub" id="hr-cards-total">-</div>
           </div>
         </div>
 
@@ -1304,7 +1302,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
           <h2 style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;">🗓️ 연차 사용 내역 <span class="tc-count" id="hr-leave-count-badge"></span></h2>
           <button class="btn btn-primary btn-sm" onclick="openLeaveModal()">+ 연차 사용 등록</button>
         </div>
-        <div class="table-card" style="margin-bottom:30px;">
+        <div class="table-card">
           <table>
             <thead><tr>
               <th>법인</th><th>직원</th><th>구분</th><th>시작일</th><th>종료일</th><th>일수</th><th>비고</th><th>작업</th>
@@ -1312,9 +1310,46 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
             <tbody id="hr-leave-tbody"></tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- ACCOUNTS -->
+    <div class="view" id="view-accounts">
+      <div class="page-header">
+        <div class="page-title-wrap">
+          <div class="page-title">계좌 관리</div>
+          <div class="page-subtitle">법인별 계좌 · 법인카드 관리</div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="kpi-grid">
+          <div class="kpi-card blue">
+            <div class="kpi-label">등록된 계좌</div>
+            <div class="kpi-value blue" id="acc-total-bank">-</div>
+            <div class="kpi-sub" id="acc-active-bank">-</div>
+          </div>
+          <div class="kpi-card amber">
+            <div class="kpi-label">사용중 법인카드</div>
+            <div class="kpi-value amber" id="acc-cards-inuse">-</div>
+            <div class="kpi-sub" id="acc-cards-total">-</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;margin-top:6px;">
+          <h2 style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;">🏦 계좌 목록 <span class="tc-count" id="acc-bank-count-badge"></span></h2>
+          <button class="btn btn-primary btn-sm" onclick="openBankAccountModal()">+ 계좌 등록</button>
+        </div>
+        <div class="table-card" style="margin-bottom:30px;">
+          <table>
+            <thead><tr>
+              <th>법인</th><th>은행</th><th>통장명</th><th>계좌번호</th><th>비밀번호 (클릭해서 보기)</th><th>상태</th><th>기타</th><th>작업</th>
+            </tr></thead>
+            <tbody id="acc-bank-tbody"></tbody>
+          </table>
+        </div>
 
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <h2 style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;">💳 법인카드 관리 <span class="tc-count" id="hr-card-count-badge"></span></h2>
+          <h2 style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;">💳 법인카드 관리 <span class="tc-count" id="acc-card-count-badge"></span></h2>
           <button class="btn btn-primary btn-sm" onclick="openCardModal()">+ 법인카드 등록</button>
         </div>
         <div class="table-card">
@@ -1322,7 +1357,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
             <thead><tr>
               <th>법인</th><th>카드명</th><th>카드사</th><th>카드정보 (클릭해서 보기)</th><th>사용자</th><th>상태</th><th>발급일</th><th>메모</th><th>작업</th>
             </tr></thead>
-            <tbody id="hr-card-tbody"></tbody>
+            <tbody id="acc-card-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -1550,6 +1585,41 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
     <div class="modal-ft">
       <button class="btn btn-secondary" onclick="closeModal('admin-login-modal')">취소</button>
       <button class="btn btn-primary" onclick="loginAdmin()">로그인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 계좌 등록 -->
+<div class="modal-overlay" id="bank-account-modal">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-hd">
+      <div class="modal-title">🏦 계좌 등록/수정</div>
+      <button class="modal-x" onclick="closeModal('bank-account-modal')">&#x00D7;</button>
+    </div>
+    <div class="modal-bd">
+      <div class="ff-row">
+        <div class="ff"><label>소속 법인 *</label><select id="bam-entity"><option value="">-- 선택 --</option></select></div>
+        <div class="ff"><label>은행 *</label><input type="text" id="bam-bank" placeholder="예: 하나은행" /></div>
+      </div>
+      <div class="ff-row">
+        <div class="ff"><label>통장명 *</label><input type="text" id="bam-name" placeholder="예: 레버프랜 운영계좌" /></div>
+        <div class="ff"><label>계좌번호 *</label><input type="text" id="bam-number" placeholder="000-000000-00-000" /></div>
+      </div>
+      <div class="ff-row">
+        <div class="ff"><label>비밀번호</label><input type="text" id="bam-password" placeholder="계좌/인터넷뱅킹 비밀번호" /></div>
+        <div class="ff"><label>상태</label>
+          <select id="bam-status">
+            <option value="active">사용</option>
+            <option value="inactive">미사용</option>
+          </select>
+        </div>
+      </div>
+      <div class="ff"><label>기타</label><input type="text" id="bam-memo" placeholder="비고" /></div>
+      <input type="hidden" id="bam-id" />
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('bank-account-modal')">취소</button>
+      <button class="btn btn-primary" onclick="saveBankAccount()">저장</button>
     </div>
   </div>
 </div>
@@ -1854,7 +1924,7 @@ select.filter-select:focus { outline: none; border-color: var(--c-primary); }
 <script>
 let sb = null, isDemoMode = false;
 let isAdmin = false, adminEmail = null;
-let db = { entities:[], suppliers:[], items:[], price_history:[], spec_history:[], partner_brands:[], partner_payments:[], entity_accounts:[], employees:[], leave_logs:[], corporate_cards:[], logistics_providers:[] };
+let db = { entities:[], suppliers:[], items:[], price_history:[], spec_history:[], partner_brands:[], partner_payments:[], entity_accounts:[], employees:[], leave_logs:[], corporate_cards:[], logistics_providers:[], bank_accounts:[] };
 let mf = { entity:null, cat:null, search:'' };
 let itemFilter = { cat:'all', search:'' };
 let priceChart = null;
@@ -1937,6 +2007,10 @@ function getDemoData(){
     logistics_providers:[
       {id:'lp1', company_name:'가나물류', contact_name:'홍길동', phone:'010-5555-6666', email:'hong@ganalogis.com', region:'수도권', service_desc:'냉동/냉장 배송', memo:'', created_at:'2024-01-01'},
       {id:'lp2', company_name:'다라택배', contact_name:'성춘향', phone:'010-7777-8888', email:'sung@daralogis.com', region:'전국', service_desc:'일반 화물', memo:'', created_at:'2024-02-01'}
+    ],
+    bank_accounts:[
+      {id:'ba1', entity_id:'e1', bank_name:'하나은행', account_name:'A법인 운영계좌', account_number:'123-456789-01-234', account_password:'pass1234', status:'active', memo:'', created_at:'2024-01-01'},
+      {id:'ba2', entity_id:'e1', bank_name:'국민은행', account_name:'A법인 급여계좌', account_number:'987-654321-09-876', account_password:'pass5678', status:'active', memo:'매월 급여 지급용', created_at:'2024-01-01'}
     ]
   };
 }
@@ -2073,7 +2147,7 @@ function showApp(){
 }
 
 async function loadAllData(){
-  const [e,s,i,ph,sh,pb,pp,ea,emp,lv,cc,lp]=await Promise.all([
+  const [e,s,i,ph,sh,pb,pp,ea,emp,lv,cc,lp,ba]=await Promise.all([
     sb.from('entities').select('*').order('name'),
     sb.from('suppliers').select('*').order('name'),
     sb.from('items').select('*').order('name'),
@@ -2085,7 +2159,8 @@ async function loadAllData(){
     sb.from('employees').select('*').order('name'),
     sb.from('leave_logs').select('*').order('start_date',{ascending:false}),
     sb.from('corporate_cards').select('*').order('card_name'),
-    sb.from('logistics_providers').select('*').order('company_name')
+    sb.from('logistics_providers').select('*').order('company_name'),
+    sb.from('bank_accounts').select('*').order('bank_name')
   ]);
   if(e.error)throw e.error;
   db.entities=e.data||[];db.suppliers=s.data||[];db.items=i.data||[];
@@ -2094,12 +2169,13 @@ async function loadAllData(){
   db.entity_accounts=ea?.data||[];
   db.employees=emp?.data||[];db.leave_logs=lv?.data||[];
   db.corporate_cards=cc?.data||[];db.logistics_providers=lp?.data||[];
+  db.bank_accounts=ba?.data||[];
 }
 
 function initApp(){
   buildEntityTabs();populateSelects();
   renderDashboard();renderMarginView();renderItemsView();renderAdminView();renderPartnerView();
-  renderHRView();renderLogisticsView();
+  renderHRView();renderLogisticsView();renderAccountsView();
 }
 
 function eName(id){return db.entities.find(e=>e.id===id)?.name||'-'}
@@ -2171,7 +2247,7 @@ function populateSelects(){
     if(el)el.innerHTML=`<option value="">-- 선택 --</option>${supOpts}`;
   });
   const eOpts2=db.entities.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
-  ['hm-entity','cm-entity'].forEach(id=>{
+  ['hm-entity','cm-entity','bam-entity'].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.innerHTML=`<option value="">-- 선택 --</option>${eOpts2}`;
   });
@@ -2571,10 +2647,6 @@ function renderHRView(){
   document.getElementById('hr-month-leave').textContent=monthLeave+'일';
   document.getElementById('hr-month-label').textContent=`${monthStr} 기준`;
 
-  const inUse=db.corporate_cards.filter(c=>c.status==='in_use').length;
-  document.getElementById('hr-cards-inuse').textContent=inUse;
-  document.getElementById('hr-cards-total').textContent=`전체 ${db.corporate_cards.length}장`;
-
   // 직원 목록
   document.getElementById('hr-emp-count-badge').textContent=`(${total}명)`;
   const empTbody=document.getElementById('hr-emp-tbody');
@@ -2629,10 +2701,54 @@ function renderHRView(){
       </tr>`;
     }).join('');
   }
+}
+
+// ==================== 계좌 관리 (계좌 + 법인카드) ====================
+
+function renderAccountsView(){
+  // 계좌 KPI
+  const totalBank=db.bank_accounts.length;
+  const activeBank=db.bank_accounts.filter(a=>a.status==='active').length;
+  document.getElementById('acc-total-bank').textContent=totalBank;
+  document.getElementById('acc-active-bank').textContent=`사용중 ${activeBank}개`;
+
+  // 법인카드 KPI
+  const inUse=db.corporate_cards.filter(c=>c.status==='in_use').length;
+  document.getElementById('acc-cards-inuse').textContent=inUse;
+  document.getElementById('acc-cards-total').textContent=`전체 ${db.corporate_cards.length}장`;
+
+  // 계좌 목록
+  document.getElementById('acc-bank-count-badge').textContent=`(${totalBank}개)`;
+  const bankTbody=document.getElementById('acc-bank-tbody');
+  if(!totalBank){
+    bankTbody.innerHTML='<tr class="no-data-row"><td colspan="8"><div class="nd-icon">📭</div>등록된 계좌가 없습니다</td></tr>';
+  }else{
+    bankTbody.innerHTML=db.bank_accounts.map(a=>{
+      const statusBadge=a.status==='active'?'<span class="badge badge-green">사용</span>':'<span class="badge badge-gray">미사용</span>';
+      const maskedHtml=`<span id="bank-pw-masked-${a.id}" style="font-family:monospace">${a.account_password?'••••••••':'-'}</span>`;
+      const fullHtml=`<span id="bank-pw-full-${a.id}" style="font-family:monospace;display:none">${a.account_password||'-'}</span>`;
+      return `<tr>
+        <td><span class="badge badge-blue">${eName(a.entity_id)}</span></td>
+        <td style="color:var(--c-text2)">${a.bank_name}</td>
+        <td><div class="td-name">${a.account_name}</div></td>
+        <td style="font-family:monospace;font-size:12px;">${a.account_number}</td>
+        <td>
+          ${maskedHtml}${fullHtml}
+          ${a.account_password?`<button class="ab" title="보기/숨기기" onclick="toggleBankPwReveal('${a.id}')" style="margin-left:4px;">👁️</button>`:''}
+        </td>
+        <td>${statusBadge}</td>
+        <td style="font-size:12px;color:var(--c-text3)">${a.memo||'-'}</td>
+        <td><div class="act-btns">
+          <button class="ab" onclick="openBankAccountModal('${a.id}')">✏️</button>
+          <button class="ab danger" onclick="deleteBankAccount('${a.id}')">🗑️</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
 
   // 법인카드
-  document.getElementById('hr-card-count-badge').textContent=`(${db.corporate_cards.length}장)`;
-  const cardTbody=document.getElementById('hr-card-tbody');
+  document.getElementById('acc-card-count-badge').textContent=`(${db.corporate_cards.length}장)`;
+  const cardTbody=document.getElementById('acc-card-tbody');
   if(!db.corporate_cards.length){
     cardTbody.innerHTML='<tr class="no-data-row"><td colspan="9"><div class="nd-icon">📭</div>등록된 법인카드가 없습니다</td></tr>';
   }else{
@@ -2672,6 +2788,65 @@ function toggleCardReveal(id){
   const showing=full.style.display!=='none';
   masked.style.display=showing?'':'none';
   full.style.display=showing?'none':'';
+}
+
+function toggleBankPwReveal(id){
+  const masked=document.getElementById('bank-pw-masked-'+id);
+  const full=document.getElementById('bank-pw-full-'+id);
+  if(!masked||!full)return;
+  const showing=full.style.display!=='none';
+  masked.style.display=showing?'':'none';
+  full.style.display=showing?'none':'';
+}
+
+function openBankAccountModal(id){
+  ['bam-id','bam-bank','bam-name','bam-number','bam-password','bam-memo'].forEach(x=>document.getElementById(x).value='');
+  document.getElementById('bam-entity').value='';
+  document.getElementById('bam-status').value='active';
+  if(id){
+    const a=db.bank_accounts.find(x=>x.id===id);
+    if(a){
+      document.getElementById('bam-id').value=id;
+      document.getElementById('bam-entity').value=a.entity_id;
+      document.getElementById('bam-bank').value=a.bank_name;
+      document.getElementById('bam-name').value=a.account_name;
+      document.getElementById('bam-number').value=a.account_number;
+      document.getElementById('bam-password').value=a.account_password||'';
+      document.getElementById('bam-status').value=a.status||'active';
+      document.getElementById('bam-memo').value=a.memo||'';
+    }
+  }
+  openModal('bank-account-modal');
+}
+
+async function saveBankAccount(){
+  const entity_id=document.getElementById('bam-entity').value;
+  const bank_name=document.getElementById('bam-bank').value.trim();
+  const account_name=document.getElementById('bam-name').value.trim();
+  const account_number=document.getElementById('bam-number').value.trim();
+  const account_password=document.getElementById('bam-password').value.trim();
+  const status=document.getElementById('bam-status').value;
+  const memo=document.getElementById('bam-memo').value.trim();
+  const editId=document.getElementById('bam-id').value;
+  if(!entity_id||!bank_name||!account_name||!account_number){showToast('소속 법인, 은행, 통장명, 계좌번호는 필수입니다.','error');return}
+  const rec={entity_id,bank_name,account_name,account_number,account_password:account_password||null,status,memo:memo||null};
+  if(isDemoMode){
+    if(editId){const idx=db.bank_accounts.findIndex(a=>a.id===editId);if(idx>=0)db.bank_accounts[idx]={...db.bank_accounts[idx],...rec}}
+    else db.bank_accounts.push({id:'ba'+Date.now(),...rec,created_at:new Date().toISOString()});
+  }else{
+    if(editId){const{error}=await sb.from('bank_accounts').update(rec).eq('id',editId);if(error){showToast('저장 실패','error');return}}
+    else{const{error}=await sb.from('bank_accounts').insert(rec);if(error){showToast('저장 실패','error');return}}
+    await loadAllData();
+  }
+  closeModal('bank-account-modal');renderAccountsView();
+  showToast('계좌 정보가 저장되었습니다.','success');
+}
+
+async function deleteBankAccount(id){
+  if(!confirm('이 계좌를 삭제할까요?'))return;
+  if(isDemoMode){db.bank_accounts=db.bank_accounts.filter(a=>a.id!==id)}
+  else{const{error}=await sb.from('bank_accounts').delete().eq('id',id);if(error){showToast('삭제 실패','error');return};await loadAllData()}
+  renderAccountsView();showToast('삭제되었습니다.','success');
 }
 
 function openEmployeeModal(id){
